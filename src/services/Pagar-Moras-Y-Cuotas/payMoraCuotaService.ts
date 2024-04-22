@@ -29,6 +29,13 @@ export const PayMoraCuota = async (idsMoras: number[], idsCuotas: number[], mont
             const montoTotal  = totalMontoCuotas + totalMontoMoras;
             console.log('Monto total a pagar:', montoTotal);
 
+
+            validateMontoPagado(idsCuotas, montoPagadoParametro, totalMontoCuotas, errores);
+
+            for (const cuota of cuotasActuales) {
+                await processCuota(cuota, montoPagadoParametro, idsCuotas, t, errores);
+            }
+
             if (idsCuotas.length > 2) {
                 if (montoTotal < montoPagadoParametro || montoTotal > montoPagadoParametro) {
                     throw new Error(`El monto ${montoPagadoParametro} que intenta pagar no es valido para saladar el monto ${montoTotal}.`)
@@ -48,8 +55,18 @@ export const PayMoraCuota = async (idsMoras: number[], idsCuotas: number[], mont
                 montoParaMora = montoPagadoParametro - montoParaCuota;
             }
 
-            if (idsCuotas !== null && idsMoras !== null) {
-                console.log('Realizando pagos...');
+            if (idsCuotas[0] !== null && idsMoras[0] !== null) {
+                console.log('Realizando pagos de cuotas y moras...');
+                // Aquí podrías añadir la lógica para realizar los pagos
+            }
+
+            if (idsCuotas[0] === null && idsMoras[0] !== null) {
+                console.log('Realizando pagos de moras...');
+                // Aquí podrías añadir la lógica para realizar los pagos
+            }
+
+            if (idsCuotas[0] !== null && idsMoras[0] === null) {
+                console.log('Realizando pagos de cuotas...');
                 // Aquí podrías añadir la lógica para realizar los pagos
             }
         });
@@ -94,4 +111,56 @@ const calculateTotalMontoCuotas = (cuotasActuales: any[]) => {
         const montoPagado = parseFloat(cuota.dataValues.montoPagado?.toString() ?? "0");
         return sum + (montoCuota - montoPagado);
     }, 0);
+};
+
+const validateMontoPagado = (idsCuotas: number[], montoPagadoParametro: number, totalMontoCuotas: number, errores: string[]) => {
+    if (idsCuotas.length > 1 && montoPagadoParametro !== totalMontoCuotas) {
+        errores.push(`El monto total pagado (${montoPagadoParametro}) no coincide con la suma de los montos de las cuotas seleccionadas (${totalMontoCuotas}).`);
+        throw new Error(`El monto total pagado (${montoPagadoParametro}) no coincide con la suma de los montos de las cuotas seleccionadas (${totalMontoCuotas}).`);
+    }
+};
+
+
+const processCuota = async (cuota: any, montoPagadoParametro: number, idsCuotas: number[], transaction: Transaction, errores: string[]) => {
+
+    const montoCuota = parseFloat(cuota.dataValues.montoCuota.toString());
+    const montoPagadoBd = parseFloat(cuota.dataValues.montoPagado?.toString() ?? "0");
+    let nuevoMontoPagado = montoPagadoBd + montoPagadoParametro;
+    let nuevoEstado = nuevoMontoPagado === montoCuota ? EstadoPago.Pagado : EstadoPago.PagoParcial;
+
+    try {
+        // Verifica si la cuota ya ha sido saldada
+        if (cuota.dataValues.estado === EstadoPago.Pagado) {
+            errores.push(`La cuota con ID ${cuota.dataValues.idCuota} ya ha sido saldada`);
+            throw new Error(`La cuota con ID ${cuota.dataValues.idCuota} ya ha sido saldada`);
+        }
+
+        if (idsCuotas.length > 1) {
+            nuevoMontoPagado = montoCuota;
+            nuevoEstado = EstadoPago.Pagado;
+        }
+
+        // Actualiza el estado y el monto pagado de la cuota
+        await Cuota.update(
+            { estado: nuevoEstado, montoPagado: nuevoMontoPagado },
+            { where: { idCuota: cuota.dataValues.idCuota }, transaction: transaction }
+        );
+
+        // Actualiza el monto restante del préstamo
+        const prestamo = await Prestamo.findByPk(cuota.dataValues.idPrestamo, { transaction: transaction });
+        if (!prestamo) {
+            errores.push(`Prestamo no encontrado (revisar linea 170 cuotaService)`);
+            throw new Error(`Prestamo no encontrado (revisar linea 170 cuotaService)`);
+        }
+
+        //aqui se actualizaba el monto restante del prestamo
+        /*await Prestamo.update(
+            { montoRestante: nuevoMontoRestantePrestamo },
+            { where: { idPrestamo: cuota.dataValues.idPrestamo }, transaction: transaction }
+        );*/
+
+    } catch (error: any) {
+        errores.push(`Error al procesar cuota con ID ${cuota.dataValues.idCuota}: ${error.message}`);
+        throw error;
+    }
 };
