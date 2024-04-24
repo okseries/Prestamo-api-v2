@@ -4,7 +4,7 @@ import { PayMoraCuota } from "../services/Pagar-Moras-Y-Cuotas/payMoraCuotaServi
 // Controlador para manejar la solicitud de pago de moras y cuotas
 export const payMoraCuotaController = async (req: Request, res: Response): Promise<void> => {
     // Extrae los datos necesarios de la solicitud
-    const { idMora, idCuota, montoPagado } = req.body;
+    const { idMora, idPrestamo, idCuota, montoPagado  } = req.body;
     console.log(idMora);
     console.log(idCuota);
     console.log(montoPagado);
@@ -21,7 +21,7 @@ export const payMoraCuotaController = async (req: Request, res: Response): Promi
 
 
         // Llama al servicio para realizar el pago de moras y cuotas
-        const resultado = await PayMoraCuota(idMora, idCuota, montoPagado);
+        const resultado = await PayMoraCuota(idMora, idPrestamo, idCuota, montoPagado);
 
         if (resultado) {
             // Envía una respuesta exitosa si el pago se realizó correctamente

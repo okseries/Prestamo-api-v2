@@ -1,6 +1,5 @@
 Modulo pago:
-
-Pago de Cuotas no Vencidas:
+Pago de Cuotas no Vencidas (es decir con estado Pendiente):
 El monto pagado debe ser mayor que 0 y menor o igual al monto de la cuota.
 No se puede pagar una cuota que ya está saldada.
 Pagos Parciales:
@@ -13,5 +12,5 @@ El monto sobrante después de pagar la mora se aplica a la cuota. Si es igual al
 Pago de Varias Cuotas con o sin Mora:
 Si se seleccionan varias cuotas y al menos una tiene mora, el monto total a pagar debe ser exactamente la suma de todas las cuotas y moras seleccionadas.
 Registro de Pagos:
-Se crea un registro en la tabla de historial de pago con detalles como el monto total pagado y el cliente que realizó el pago.
+Se crea un registro en la tabla de historial de pago con detalles como el monto total pagado y el cliente que realizó el pago, etc.
 Se crea un detalle de pago asociado a ese historial, indicando el monto pagado para cada cuota y mora, si corresponde.
