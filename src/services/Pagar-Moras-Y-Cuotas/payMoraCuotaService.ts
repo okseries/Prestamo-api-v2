@@ -12,6 +12,17 @@ export const PayMoraCuota = async (idsMoras: number[], idPrestamo: number, idsCu
 
     try {
 
+        const { montoTotal } = await calcularMontoTotal(idsMoras, idsCuotas, transaction);
+
+        // Eliminar elementos null de los arreglos
+        idsMoras = idsMoras.filter((id) => id !== null && id !== undefined);
+        idsCuotas = idsCuotas.filter((id) => id !== null && id !== undefined);
+
+        if (idsCuotas.length > 1 && montoPagadoParametro !== montoTotal) {
+            throw new Error(`Monto pagado ${montoPagadoParametro} incorrecto para el monto que debe pagar ${montoTotal}`)
+        }
+
+
 
 
         const prestamo = await Prestamo.findByPk(idPrestamo)
@@ -22,7 +33,6 @@ export const PayMoraCuota = async (idsMoras: number[], idPrestamo: number, idsCu
         const idCliente: number = (prestamo ? parseInt(prestamo?.dataValues.idCliente.toString()) : 0);
         const idSucursal: number = (prestamo ? parseInt(prestamo?.dataValues.idSucursal.toString()) : 0);
 
-        const { montoTotal } = await calcularMontoTotal(idsMoras, idsCuotas, transaction);
 
         const historialPago = await crearHistorialPago(montoPagadoParametro, idCliente, idSucursal, transaction);
         await updateMoraCuota(historialPago.idHistorialPago, idSucursal, montoPagadoParametro, idsMoras, idsCuotas, transaction);
