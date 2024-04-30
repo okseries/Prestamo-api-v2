@@ -31,7 +31,7 @@ export const router = Router();
  *       404:
  *         description: No se encontraron registros de historial de pagos para la sucursal especificada.
  */
-router.get('/sucursal/:id',authenticateToken, obtenerHistorialPagos);
+router.get('/sucursal/:id',/*authenticateToken,*/ obtenerHistorialPagos);
 
 /**
  * @swagger
@@ -52,7 +52,7 @@ router.get('/sucursal/:id',authenticateToken, obtenerHistorialPagos);
  *       404:
  *         description: No se encontró un registro de historial de pagos con el ID especificado.
  */
-router.get('/:id',authenticateToken, obtenerHistorialPagoById);
+router.get('/:id',/*authenticateToken,*/ obtenerHistorialPagoById);
 
 /**
  * @swagger
@@ -73,7 +73,7 @@ router.get('/:id',authenticateToken, obtenerHistorialPagoById);
  *       404:
  *         description: No se encontró un registro de historial de pagos con el ID especificado.
  */
-router.put('/cancelarPago/:id',authenticateToken, cancelarPagoController);
+router.put('/cancelarPago/:id',/*authenticateToken,*/ cancelarPagoController);
 
 /**
  * @swagger
@@ -93,7 +93,7 @@ router.put('/cancelarPago/:id',authenticateToken, cancelarPagoController);
  *       400:
  *         description: Error al procesar la solicitud de creación del historial de pagos.
  */
-router.post('/sucursal/:id',authenticateToken, crearHistorialPago);
+router.post('/sucursal/:id',/*authenticateToken,*/ crearHistorialPago);
 
 /**
  * @swagger

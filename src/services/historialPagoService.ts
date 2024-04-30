@@ -19,7 +19,7 @@ export const getAllHistorialPago = async (idSucursal: number): Promise<Historial
                 [
                     {
                         model: Cliente,
-                        attributes: ['primerNombre', 'identificacion']
+                        attributes: ['primerNombre', 'apellidoPaterno', 'identificacion']
                     },
                     {
                         model: DetallePago,

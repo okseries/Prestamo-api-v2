@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { obtenerCantidadTotalPrestada, obtenerInformacionCuotas, obtenerMontoTotalPrestamos, obtenerSumaDeHistorilPago, obtenerSumaDemorasGeneral, obtenerSumaDemorasPagadas, obtenerSumaInteresesPrestamos } from "../services/GestorFinancieroService";
+import { obtenerCantidadTotalPrestada, obtenerInformacionCuotas, obtenerMontoTotalPrestamos, obtenerSumaDeHistorilPago, obtenerSumaDemorasGeneral, obtenerSumaDemorasPagadas, obtenerSumaDemorasPagadasEnElMesActual, obtenerSumaInteresesPrestamos } from "../services/GestorFinancieroService";
 import { handleError } from "../utility/handleError";
 
 
@@ -21,6 +21,7 @@ export const GestorFinancieroController = async (req: Request, res: Response ): 
 
         const SumaMoras = await obtenerSumaDemorasGeneral(idSucursal);
         const SumaMorasPagadas = await obtenerSumaDemorasPagadas(idSucursal);
+        const SumaMorasMesActual = await obtenerSumaDemorasPagadasEnElMesActual(idSucursal);
 
         res.status(200).json({
             message: 'success',
@@ -31,6 +32,7 @@ export const GestorFinancieroController = async (req: Request, res: Response ): 
             SumaDeHistorialPago,
             SumaMoras,
             SumaMorasPagadas,
+            SumaMorasMesActual
         });
 
     } catch (error: any) {
