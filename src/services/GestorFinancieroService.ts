@@ -117,32 +117,26 @@ export const obtenerInformacionCuotas = async (idSucursal: number) => {
           cuotasPagoParcial,
           sumaCuotasPagadas,
           sumaCuotasPendientes,
-          sumaCuotasPagoParcial
+          sumaCuotasPagoParcial,
+          sumaCuotasTotal
       ] = await Promise.all([
           Cuota.count({ where: { idSucursal, deleted: false } }),
           Cuota.count({ where: { estado: EstadoPago.Pagado, idSucursal, deleted: false } }),
           Cuota.count({ where: { estado: EstadoPago.Pendiente, idSucursal, deleted: false } }),
           Cuota.count({ where: { estado: EstadoPago.PagoParcial, idSucursal, deleted: false } }),
-          Cuota.sum('montoCuota', { where: { estado: EstadoPago.Pagado, idSucursal, deleted: false } }) || 0,
+          Cuota.sum('montoPagado', { where: { estado: EstadoPago.Pagado, idSucursal, deleted: false } }) || 0,
           Cuota.sum('montoCuota', { where: { estado: EstadoPago.Pendiente, idSucursal, deleted: false } }) || 0,
-          Cuota.sum('montoCuota', { where: { estado: EstadoPago.PagoParcial, idSucursal, deleted: false } })
+          Cuota.sum('montoPagado', { where: { estado: EstadoPago.PagoParcial, idSucursal, deleted: false } }) || 0,
+          Cuota.sum('montoCuota', { where: { idSucursal, deleted: false } }) || 0,
       ]);      
 
       // Manejar el caso de sumaCuotasPagoParcial null
       const sumaCuotasPagoParcialValue = isNaN(sumaCuotasPagoParcial) ? 0 : (sumaCuotasPagoParcial || 0);
       const sumaCuotasPagadoValue = isNaN(sumaCuotasPagadas) ? 0 : (sumaCuotasPagadas || 0);
       const sumaCuotasPendienteValue = isNaN(sumaCuotasPendientes) ? 0 : (sumaCuotasPendientes || 0);
-
-      console.log('Información de cuotas obtenida:', {
-          totalCuotas,
-          cuotasPagadas,
-          cuotasPendientes,
-          cuotasPagoParcial,
-          sumaCuotasPagadas: sumaCuotasPagadoValue,
-          sumaCuotasPendientes: sumaCuotasPendienteValue,
-          sumaCuotasPagoParcial: sumaCuotasPagoParcialValue,
-      });
-
+      const sumaCuotasTotalValue = isNaN(sumaCuotasTotal) ? 0 : (sumaCuotasTotal || 0);
+   
+      
       return {
           totalCuotas,
           cuotasPagadas,
@@ -151,6 +145,7 @@ export const obtenerInformacionCuotas = async (idSucursal: number) => {
           sumaCuotasPagadas: sumaCuotasPagadoValue,
           sumaCuotasPendientes: sumaCuotasPendienteValue,
           sumaCuotasPagoParcial: sumaCuotasPagoParcialValue,
+          sumaCuotasTotal: sumaCuotasTotalValue,
       };
   } catch (error) {
       console.error('Error al obtener información de cuotas:', error);
@@ -158,4 +153,39 @@ export const obtenerInformacionCuotas = async (idSucursal: number) => {
   }
 };
 
+
+
+export const obtenerInformacionMoras = async (idSucursal: number) => {
+    try {
+        const [
+            totalMoras,
+            morasPagadas,
+            morasPendientes,
+            sumaMorasPagadas,
+            sumaMorasPendientes,
+        ] = await Promise.all([
+            Mora.count({ where: { idSucursal, deleted: false } }),
+            Mora.count({ where: { pagada: true, idSucursal, deleted: false } }),
+            Mora.count({ where: { pagada: false, idSucursal, deleted: false } }),
+            Mora.sum('montoMora', { where: { pagada: true, idSucursal, deleted: false } }) || 0,
+            Mora.sum('montoMora', { where: { pagada: false, idSucursal, deleted: false } }) || 0,
+        ]);      
+  
+        // Manejar el caso de sumaCuotasPagoParcial null
+        const sumaMorasPagadasValue = isNaN(sumaMorasPagadas) ? 0 : (sumaMorasPagadas || 0);
+        const sumaMorasPendientesValue = isNaN(sumaMorasPendientes) ? 0 : (sumaMorasPendientes || 0);
+     
+  
+        return {
+            totalMoras,
+            morasPagadas,
+            morasPendientes,
+            sumaMorasPagadas: sumaMorasPagadasValue,
+            sumaMorasPendientes: sumaMorasPendientesValue,
+        };
+    } catch (error) {
+        console.error('Error al obtener información de moras:', error);
+        throw new Error('Error al obtener información de moras');
+    }
+  };
 
