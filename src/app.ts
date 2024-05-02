@@ -3,6 +3,7 @@ import bodyParser from 'body-parser';
 import { sequelize } from "./config/sequelize.config";
 import { Rutas } from "./routes/rutas";
 import cors from 'cors';
+import { obtenerInformacionMoras } from "./services/GestorFinancieroService";
 
 const app: Express = express();
 
@@ -45,6 +46,7 @@ sequelize.sync()
 
 ;
 
+const moras = obtenerInformacionMoras(1);
 
 /*// Suponiendo que tienes un array de IDs de cuotas
 const idsCuotas: number[] = [21];

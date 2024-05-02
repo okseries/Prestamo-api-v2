@@ -5,6 +5,7 @@ import { Prestamo } from "../models/prestamo";
 import { Mora } from "../models/mora";
 import { findPrestamoById } from "./prestamoService";
 import { Op } from "sequelize";
+import { DetallePago } from "../models/detallePago";
 
 export const getAllMoras = async (): Promise<Mora[]> => {
     try {
@@ -15,9 +16,10 @@ export const getAllMoras = async (): Promise<Mora[]> => {
     }
 };
 
-export const getAllMorasDetalle = async (): Promise<Mora[]> => {
+export const getAllMorasDetalle = async (idSucursal: number): Promise<Mora[]> => {
     try {
         const moras = await Mora.findAll({
+            where: {idSucursal},
             include: [
                 {
                     model: Cuota,
@@ -25,7 +27,12 @@ export const getAllMorasDetalle = async (): Promise<Mora[]> => {
                         model: Prestamo,
                         include: [{ model: Cliente }]
                     }],
+                    
+
                 },
+                {
+                    model: DetallePago,
+                }
             ],
         });
         return moras;

@@ -16,7 +16,8 @@ export const obtenerMoras = async (req: Request, res: Response): Promise<void> =
 
 export const obtenerMorasDetalle = async (req: Request, res: Response): Promise<void> => {
     try {
-        const morasDetalle = await getAllMorasDetalle();
+        const idSucursal: number = parseInt(req.params.id);
+        const morasDetalle = await getAllMorasDetalle(idSucursal);
         res.status(200).json(morasDetalle);
     } catch (error: any) {
         handleError(res, error);

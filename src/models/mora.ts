@@ -1,6 +1,7 @@
-import { Column, Model, Table, DataType, ForeignKey, BelongsTo } from 'sequelize-typescript';
+import { Column, Model, Table, DataType, ForeignKey, BelongsTo, HasMany } from 'sequelize-typescript';
 import { Cuota } from './cuota';
 import { Sucursal } from './sucursal';
+import { DetallePago } from './detallePago';
 
 @Table({ tableName: 'Mora' })
 export class Mora extends Model<Mora> {
@@ -30,6 +31,9 @@ export class Mora extends Model<Mora> {
 
     @Column({type: DataType.INTEGER, defaultValue: false})
     diasDeRetraso!: number;
+
+    @HasMany(()=> DetallePago)
+    DetallePago!: DetallePago[];
 
     @Column({ type: DataType.BOOLEAN,  defaultValue: false })
     deleted!: boolean;
