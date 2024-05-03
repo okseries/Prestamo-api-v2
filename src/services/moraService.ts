@@ -19,7 +19,7 @@ export const getAllMoras = async (): Promise<Mora[]> => {
 export const getAllMorasDetalle = async (idSucursal: number): Promise<Mora[]> => {
     try {
         const moras = await Mora.findAll({
-            where: {idSucursal},
+            where: {idSucursal, deleted: false},
             include: [
                 {
                     model: Cuota,
