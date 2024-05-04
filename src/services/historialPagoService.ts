@@ -145,13 +145,11 @@ export const cancelarPagoService = async (idHistorialPago: number, estado: Parti
                 } as Cuota;
 
                 await cuota.update(data);
-                console.log(`El estado de la cuota ${idCuota} ha sido actualizado a ${estadoAnterior}`);
             } else {
                 console.log(`No se encontró la cuota con el ID ${idCuota}`);
             }
         }
 
-        console.log('Todos los detalles de pago han sido procesados.');
 
         // Retorna true para indicar que la operación fue exitosa
         return true;

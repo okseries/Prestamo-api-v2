@@ -10,7 +10,6 @@ import { Op } from 'sequelize';
 export const obtenerCantidadTotalPrestada = async (idSucursal: number) => {
     try {
         const sumaCantidadPrestada = await Prestamo.sum('capital', { where: { deleted: false, idSucursal } }) || 0;
-        console.log('Suma de capital prestado:', sumaCantidadPrestada);
         return sumaCantidadPrestada;
     } catch (error) {
         console.error('Error al obtener la cantidad total prestada:', error);
@@ -21,7 +20,6 @@ export const obtenerCantidadTotalPrestada = async (idSucursal: number) => {
 export const obtenerMontoTotalPrestamos = async (idSucursal: number) => {
     try {
         const sumaMontoTotal = await Prestamo.sum('monto', { where: { deleted: false, idSucursal } }) || 0;
-        console.log('Suma del monto total (Capital total + Intereses total):', sumaMontoTotal);
         return sumaMontoTotal;
     } catch (error) {
         console.error('Error al obtener el monto total de los préstamos:', error);
@@ -33,7 +31,6 @@ export const obtenerMontoTotalPrestamos = async (idSucursal: number) => {
 export const obtenerSumaInteresesPrestamos = async (idSucursal: number) => {
     try {
         const sumaIntereses = await Prestamo.sum('interes', { where: { deleted: false, idSucursal } }) || 0;
-        console.log('Suma de intereses de préstamos:', sumaIntereses);
         return sumaIntereses;
     } catch (error) {
         console.error('Error al obtener la suma de intereses de los préstamos:', error);
@@ -221,22 +218,6 @@ export const obtenerInformacionMoras = async (idSucursal: number) => {
             Mora.sum('montoMora', { where: { pagada: false, idSucursal, deleted: false } }) || 0,
             Mora.sum('montoMora', { where: { idSucursal, deleted: false } }) || 0,
         ]);
-
-
-
-
-
-
-
-
-
-        console.log('cantidadRegistrosMoras:', cantidadRegistrosMoras);
-        console.log('montoTotalMorasPagadas:', montoTotalMorasPagadas);
-        console.log('cantidadMorasPagadas:', cantidadMorasPagadas);
-        console.log('montoTotalMorasPendientes:', montoTotalMorasPendientes);
-        console.log('cantidadMorasPendientes:', cantidadMorasPendientes);
-        console.log('montoTotalMoras:', montoTotalMoras);
-        console.log('montoTotalPagadoRangoFecha:', montoTotalPagadoRangoMes);
 
         return {
             cantidadRegistrosMoras,

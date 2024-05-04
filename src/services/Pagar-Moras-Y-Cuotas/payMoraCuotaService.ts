@@ -18,11 +18,9 @@ export const PayMoraCuota = async (idsMoras: number[], idPrestamo: number, idsCu
         idsMoras = idsMoras.filter((id) => id !== null && id !== undefined);
         idsCuotas = idsCuotas.filter((id) => id !== null && id !== undefined);
 
-        if (idsCuotas.length > 1 && montoPagadoParametro !== montoTotal) {
+        if (idsCuotas.length > 1 && montoPagadoParametro !== montoTotal || montoPagadoParametro > montoTotal) {
             throw new Error(`Monto pagado ${montoPagadoParametro} incorrecto para el monto que debe pagar ${montoTotal}`)
         }
-
-
 
 
         const prestamo = await Prestamo.findByPk(idPrestamo)
@@ -40,7 +38,7 @@ export const PayMoraCuota = async (idsMoras: number[], idPrestamo: number, idsCu
 
         await transaction.commit();
 
-        console.log('Transacción completada.');
+        //console.log('Transacción completada.');
 
         return true;
     } catch (error) {
@@ -69,7 +67,7 @@ const updateMoraCuota = async (idHistorialPago: number, idSucursal: number, mont
 
             const montoAdeudadoMora = parseFloat(mora.dataValues.montoMora.toString());
 
-            console.log(`ID mora: ${idMora} Monto adeudado: ${montoAdeudadoMora}`);
+            //console.log(`ID mora: ${idMora} Monto adeudado: ${montoAdeudadoMora}`);
 
             // Si hay suficiente dinero disponible, pagamos la mora
             if (montoDisponible >= montoAdeudadoMora) {
@@ -102,7 +100,7 @@ const updateMoraCuota = async (idHistorialPago: number, idSucursal: number, mont
 
                 const montoAdeudadoCuota = valorOriginalDeCuota - valorPagadoCuota;
 
-                console.log(`ID cuota: ${idCuota} Monto adeudado: ${montoAdeudadoCuota}`);
+                //console.log(`ID cuota: ${idCuota} Monto adeudado: ${montoAdeudadoCuota}`);
 
                 // Si el dinero disponible es suficiente para saldar la cuota, actualizar el estado
                 if (montoDisponible >= montoAdeudadoCuota) {

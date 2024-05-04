@@ -59,25 +59,20 @@ export const createMoras = async (idsCuotas: number[]): Promise<boolean> => {
     try {
         const fechaActual = new Date();
         fechaActual.setUTCHours(0, 0, 0, 0);
-        console.log(`Fecha actual: ${fechaActual.toISOString()}`);
 
         for (const idCuota of idsCuotas) {
-            console.log(`Procesando cuota con ID ${idCuota}...`);
             const cuota = await Cuota.findByPk(idCuota);
             if (!cuota) {
-                console.log(`La cuota con ID ${idCuota} no existe.`);
                 continue;
             }
 
             const fechaVencimiento = cuota.dataValues.fechaCuota;
             const diasDeRetraso = calcularDiasDeRetraso(fechaActual, fechaVencimiento);
-            console.log(`Días de retraso para cuota ${idCuota}: ${diasDeRetraso}`);
 
             const prestamo = await Prestamo.findByPk(cuota.dataValues.idPrestamo);
             const umbralDiasPago: number = prestamo?.dataValues.umbralDiasPago ?? 0;
             const porcentajeMora: number = prestamo?.dataValues.porcentajeMora ?? 0;
 
-            console.log(prestamo);
 
 
             if (cuota.dataValues.estado === EstadoPago.Pagado) {
@@ -89,7 +84,6 @@ export const createMoras = async (idsCuotas: number[]): Promise<boolean> => {
                 
             }
 
-            console.log(`Cuota ${idCuota}: Días de retraso: ${diasDeRetraso}`);
 
             // Verificar si ya existe un registro de mora para la cuota en la fecha actual
             const moraExistente = await Mora.findOne({
@@ -106,13 +100,10 @@ export const createMoras = async (idsCuotas: number[]): Promise<boolean> => {
                 throw new Error(`Ya existe un registro de mora para la cuota ${idCuota} en la fecha actual.`);
             }
 
-            console.log(`Cuota ${idCuota}: Generando mora...`);
             const montoMora = await calcularMoraPorCuota(cuota.dataValues, diasDeRetraso, porcentajeMora);
-            console.log(`Cuota ${idCuota}: Monto de mora calculado: ${montoMora}`);
 
             // Creamos un nuevo registro de mora
             await crearRegistroMora(cuota.dataValues, montoMora, umbralDiasPago, fechaActual);
-            console.log(`Cuota ${idCuota}: Mora aplicada correctamente.`);
         }
 
         return true;

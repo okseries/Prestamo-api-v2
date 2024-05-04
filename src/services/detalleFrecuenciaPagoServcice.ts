@@ -22,7 +22,6 @@ export const createDetalleFrecuenciaPago = async (detalleFrecuenciaData: Detalle
     try {
         const detalleFrecuenciaCreada = await DetalleFrecuencia.create(detalleFrecuenciaData);
         // Logging
-        console.log("Detalle de frecuencia de pago creado correctamente:", detalleFrecuenciaCreada.toJSON());
         return detalleFrecuenciaCreada;
     } catch (error: any) {
         // Manejo de errores específicos

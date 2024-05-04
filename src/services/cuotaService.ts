@@ -153,9 +153,7 @@ export const createCuotas = async (idPrestamo: number): Promise<Cuota[]> => {
 
         // Obtener información del préstamo
         const prestamo = await findPrestamoById(idPrestamo);
-        console.log('****************cuota service 295 linea **************');
         
-        console.log(prestamo);
         
         if (!prestamo) {
             throw new Error(`Error: No se encontró el préstamo con ID ${idPrestamo}.`);
@@ -264,11 +262,9 @@ const generarCuotas = async ({ idPrestamo, idSucursal, cuota, tiempo, fechaInici
 
 
 export const markCuotasForPrestamoAsDeleted = async (idPrestamo: number): Promise<boolean> => {
-    console.log(`Se recibio por parametro el ID: ${idPrestamo}`);
 
     const transaction = await sequelize.transaction();
     try {
-        console.log(`Comenzando la transacción para marcar cuotas como eliminadas para el préstamo con ID ${idPrestamo}`);
 
         // Marcar todas las cuotas asociadas al préstamo como eliminadas dentro de la transacción
         const cuotas = await Cuota.findAll({ where: { idPrestamo }, transaction });
@@ -277,19 +273,15 @@ export const markCuotasForPrestamoAsDeleted = async (idPrestamo: number): Promis
                 no se deberia marcar como eliminada una cuota que tenga ya algun pago realizado.
         }*/
 
-        console.log('Cuotas encontradas para el id del prestamo: ', idPrestamo);
-        console.log(cuotas);
 
 
 
         await Promise.all(cuotas.map(async cuota => {
-            console.log(`Marcando como eliminada la cuota con ID ${cuota.dataValues.idCuota}`);
             await cuota.update({ deleted: true }, { transaction });
 
             // Marcar los detalles de pago asociados como eliminados
             const detallesPago = await DetallePago.findAll({ where: { idCuota: cuota.dataValues.idCuota }, transaction });
             await Promise.all(detallesPago.map(async detalle => {
-                console.log(`Marcando como eliminado el detalle de pago con ID ${detalle.dataValues.idDetallePago}`);
                 await detalle.update({ deleted: true }, { transaction });
             }));
 
@@ -297,22 +289,19 @@ export const markCuotasForPrestamoAsDeleted = async (idPrestamo: number): Promis
             const historialesPagoIds = detallesPago.map(detalle => detalle.dataValues.idHistorialPago);
 
             // Marcar como eliminados los historiales de pago asociados
-            console.log(`Marcando como eliminados los historiales de pago con IDs ${historialesPagoIds.join(', ')}`);
             await HistorialPago.update({ deleted: true }, { where: { idHistorialPago: historialesPagoIds }, transaction });
 
             // Marcar las moras asociadas como eliminadas
             const moras = await Mora.findAll({ where: { idCuota: cuota.dataValues.idCuota }, transaction });
             await Promise.all(moras.map(mora => {
-                console.log(`Marcando como eliminada la mora con ID ${mora.idMora}`);
                 return mora.update({ deleted: true }, { transaction });
             }));
         }));
 
-        console.log('Commit de la transacción');
+       // console.log('Commit de la transacción');
         // Commit de la transacción si todas las operaciones tienen éxito
         await transaction.commit();
 
-        console.log(`Cuotas para el préstamo con ID ${idPrestamo} marcadas como eliminadas con éxito`);
         return true;
     } catch (error) {
         console.error('Error al marcar como eliminadas las cuotas del préstamo:', error);

@@ -5,9 +5,7 @@ import { PayMoraCuota } from "../services/Pagar-Moras-Y-Cuotas/payMoraCuotaServi
 export const payMoraCuotaController = async (req: Request, res: Response): Promise<void> => {
     // Extrae los datos necesarios de la solicitud
     const { idMora, idPrestamo, idCuota, montoPagado  } = req.body;
-    console.log(idMora);
-    console.log(idCuota);
-    console.log(montoPagado);
+    
 
 
 

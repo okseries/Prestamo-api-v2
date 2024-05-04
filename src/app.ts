@@ -46,7 +46,6 @@ sequelize.sync()
 
 ;
 
-const moras = obtenerInformacionMoras(1);
 
 /*// Suponiendo que tienes un array de IDs de cuotas
 const idsCuotas: number[] = [21];

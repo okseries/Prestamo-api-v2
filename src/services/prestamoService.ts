@@ -123,9 +123,6 @@ export const createPrestamos = async (idSucursal: number, bodyData: any): Promis
             throw new Error("Los datos de entrada no son válidos.");
         }
 
-        console.log(bodyData);
-
-
         // Desestructurar bodyData y excluir propiedades no deseadas
         const { idFrecuencia, cadaCuantosDias, diaDelMesEnNumero, nombreDiaSemana, ...restData } = bodyData;
 
