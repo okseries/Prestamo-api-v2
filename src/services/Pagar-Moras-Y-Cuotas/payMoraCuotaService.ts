@@ -10,6 +10,9 @@ import { Prestamo } from "../../models/prestamo";
 export const PayMoraCuota = async (idsMoras: number[], idPrestamo: number, idsCuotas: number[], montoPagadoParametro: number): Promise<boolean> => {
     const transaction = await sequelize.transaction();
 
+    console.log('idPrestamo: ', idPrestamo);
+    
+
     try {
 
         const { montoTotal } = await calcularMontoTotal(idsMoras, idsCuotas, transaction);
