@@ -113,7 +113,7 @@ export const frecuenciaSemanal = (fechaDeLaPrimeraCuota: Date, cantidadDeFechasA
 export const frecuenciaMensual = (fechaDeLaPrimeraCuota: Date, cantidadDeFechasAGenerar: number, diaDelMesEnNumero: number): RRule => {
     const fechaEstatica = new Date(fechaDeLaPrimeraCuota);
     
-    if (diaDelMesEnNumero > 28) {
+    if (false) {
         throw new Error('El día del mes no puede ser mayor de 28');
     }
     return new RRule({
